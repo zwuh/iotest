@@ -1,6 +1,5 @@
-# Testbed Setup
-
-## General
+Testbed Setup
+======
 
  * Interconnection: 1 Gbps LAN switch + 802.11n Wi-Fi
  * Storage client: Linux, GbE + Wi-Fi
@@ -23,6 +22,7 @@
  ethtool --offload <iface> txvlan off
 ```
 
+
 ## Useful Commands
 
  * traceroute
@@ -33,6 +33,19 @@
 sync
 sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 ```
+
+
+## Swift
+
+
+### Server
+
+ * http://docs.openstack.org/developer/swift/development_saio.html
+
+### Client - CloudFuse
+
+ * http://redbo.github.io/cloudfuse/
+ * Note that older kernels does not support O_DIRECT for FUSE open().
 
 
 ## NFS
@@ -87,7 +100,7 @@ ISCSITARGET_ENABLE=true
 
 ### Open-iSCSI Initiator
 
- * Start commands:
+ * Start commands
 
 ```
 iscsiadm -m discovery -t st -p (server)
@@ -95,20 +108,10 @@ iscsiadm -m node --login
 mount /dev/sdXn (mountpoint)
 ```
 
-## Swift
 
-### Server
+Performance Tuning
+======
 
- * http://docs.openstack.org/developer/swift/development_saio.html
-
-### Client - CloudFuse
-
- * http://redbo.github.io/cloudfuse/
-
- * CloudFuse with custom patch: https://github.com/zwuh/cloudfuse/tree/timeout
-
-
-## Performance Tuning
 
 ### TCP parameter
 
@@ -178,7 +181,9 @@ ImmediateData = yes
  * There are some decisions made in CloudFuse which made some operations spend long time backing off, or hang if Swift server does not reply. Patched: https://github.com/zwuh/cloudfuse/tree/timeout
 
 
-## References
+References
+======
+
 
 1. "User Guide for Linux and Windows DSS", Systems Architecture Lab, Intel Labs ,January 5, 2013
 
