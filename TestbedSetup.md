@@ -1,14 +1,118 @@
-Testbed Setup
-=====
+# Testbed Setup
+
+## General
 
  * Interconnection: 1 Gbps LAN switch + 802.11n Wi-Fi
- * tcs1: Storage client, Linux, GbE + Wi-Fi
- * tcs2: Storage server/target, Linux, GbE
- * WANem: http://http://sourceforge.net/projects/wanem/, GbE
+ * Storage client: Linux, GbE + Wi-Fi
+ * Storage server: Linux, GbE
+ * WANem: http://sourceforge.net/projects/wanem/ , GbE
+ * Route IP traffic through WANem when necessary.
+ * Disable network interface offload engines if packet capture is desired
 
- * TCP parameter (tcs1,tcs2)
+```
+# all as root
+ ethtool --offload <iface> rx off
+ ethtool --offload <iface> tx off
+ ethtool --offload <iface> gso off
+ ethtool --offload <iface> tso off
+ ethtool --offload <iface> sg off
+ ethtool --offload <iface> ufo off
+ ethtool --offload <iface> gro off
+ ethtool --offload <iface> lro off
+ ethtool --offload <iface> rxvlan off
+ ethtool --offload <iface> txvlan off
+```
 
-  * Conf: /etc/sysctl.conf
+## Useful Commands
+
+ * traceroute
+ * iperf
+ * Clean cache
+
+```
+sync
+sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+```
+
+
+## NFS
+
+ * /etc/exports
+
+```
+(NFS mount) 192.168.1.0/255.255.255.0(rw,sync,all_squash,no_subtree_check,anonuid=1000,anongid=1000)
+```
+
+ * Make a subdirectory in iSCSI mount point and set the test user as owner.
+
+## iSCSI
+
+### Intel iSCSI
+
+ * See reference [1]
+
+#### Target
+
+ * udisk start script ~/start-iscsi-server.sh
+
+```
+#!/bin/sh
+DEV=/dev/sdX
+# 3260 is the default iSCSI port
+PORT=3261
+GBS=100
+sudo killall udisk
+sudo rm -f /tmp/UDISK.$PORT
+sudo /usr/local/bin/udisk -d $DEV -p $PORT -b 1024 -n `expr 1024 \* 1024 \* $GBS` > SOMEWHERE
+```
+
+#### Initiator
+
+  * ~/start-iscsi-client.sh
+
+```
+sudo modprobe intel_iscsi
+sudo mount /dev/sdXn (mountpoint)
+```
+
+### IET iSCSI Target
+
+ * /etc/default/iscsitarget
+
+```
+ISCSITARGET_ENABLE=true
+```
+
+ * Package (Ubuntu): iscsitarget ietadm
+
+### Open-iSCSI Initiator
+
+ * Start commands:
+
+```
+iscsiadm -m discovery -t st -p (server)
+iscsiadm -m node --login
+mount /dev/sdXn (mountpoint)
+```
+
+## Swift
+
+### Server
+
+ * http://docs.openstack.org/developer/swift/development_saio.html
+
+### Client - CloudFuse
+
+ * http://redbo.github.io/cloudfuse/
+
+ * CloudFuse with custom patch: https://github.com/zwuh/cloudfuse/tree/timeout
+
+
+## Performance Tuning
+
+### TCP parameter
+
+ *  Server and Client: /etc/sysctl.conf
 
 ```
 # for swift
@@ -24,26 +128,18 @@ net.ipv4.tcp_no_metrics_save = 1
 net.core.netdev_max_backlog = 10000
 ```
 
- * NFS server
+### NFS
 
-  * Worker threads: /etc/sysconfig/nfs
+ * server worker threads: /etc/sysconfig/nfs
 
 ```
 # Default is 8
 RPCNFSDCOUNT=32
 ```
 
- * NFS Exports: /etc/exports
+### iSCSI
 
-```
-(NFS mount) 192.168.1.0/255.255.255.0(rw,sync,all_squash,no_subtree_check,anonuid=1000,anongid=1000)
-```
-
- * Make a subdirectory in iSCSI mount point and set the test user as owner.
-
- * Intel iSCSI target: udisk 
-
-  * /etc/ips.conf
+ * Intel iSCSI target (udisk): /etc/ips.conf
 
 ```
 MaxRecvDataSegmentLength=65536
@@ -51,49 +147,6 @@ FirstBurstLength=67108864
 MaxBurstLength=67108864
 
 ```
-
- * udisk start script ~/start-iscsi-server.sh
-
-```
-#!/bin/sh
-DEV=/dev/sdX
-# 3260 is the default iSCSI port
-PORT=3261
-GBS=100
-sudo killall udisk
-sudo rm -f /tmp/UDISK.$PORT
-sudo /usr/local/bin/udisk -d $DEV -p $PORT -b 1024 -n `expr 1024 \* 1024 \* $GBS` > SOMEWHERE
-```
-
- * Intel iSCSI initiator: intel\_iscsi
-
-  * ~/start-iscsi-client.sh
-
-```
-sudo modprobe intel_iscsi
-sudo mount /dev/sdXn (mountpoint)
-```
-
- * IET iSCSI target:
-
-  * /etc/default/iscsitarget
-
-```
-ISCSITARGET_ENABLE=true
-```
-
- * /etc/iet/ietd.conf
-
-```
-MaxRecvDataSegmentLength = 262144
-MaxXmitDataSegmentLength = 262144
-MaxBurstLength = 16777216
-FirstBurstLength = 16777216
-IntialR2T = no
-ImmediateData = yes
-```
-
- * IET iSCSI target package (Ubuntu): iscsitarget ietadm
 
  * Open-iSCSI initiator:
 
@@ -104,44 +157,28 @@ ImmediateData = yes
 node.conn[0].tcp.window_size = 4194304
 ```
 
-  * Open-iSCSI initiator start commands:
+
+ * IET iSCSI Target: /etc/iet/ietd.conf
 
 ```
-iscsiadm -m discovery -t st -p (server)
-iscsiadm -m node --login
-mount /dev/sdXn (mountpoint)
+MaxRecvDataSegmentLength = 262144
+MaxXmitDataSegmentLength = 262144
+MaxBurstLength = 16777216
+FirstBurstLength = 16777216
+IntialR2T = no
+ImmediateData = yes
 ```
 
- * Swift: http://github.com/openstack/swift
+### Swift
 
-  * SAIO but with only 1 node and 1 replica and use ext4 instead of xfs.
+ * SAIO but with only 1 node and 1 replica.
 
- * CloudFuse with custom patch: https://github.com/zwuh/cloudfuse/tree/timeout
+ * May also use ext4 instead of xfs.
 
-  * ~/.cloudfuse
+ * There are some decisions made in CloudFuse which made some operations spend long time backing off, or hang if Swift server does not reply. Patched: https://github.com/zwuh/cloudfuse/tree/timeout
 
-```
-username=test:tester
-password=testing
-authurl=http://(server):8080/auth/v1.0
-```
 
- * CloudFuse commands
-
-```
-./cloudfuse (mountpoint)    (mount)
-fusermount -u (mountpoint)  (unmount)
-```
-
- * Clean cache
-
-```
-sync
-sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
-```
-
-References
-----
+## References
 
 1. "User Guide for Linux and Windows DSS", Systems Architecture Lab, Intel Labs ,January 5, 2013
 
