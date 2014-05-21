@@ -6,6 +6,18 @@ Testbed Setup
  * Storage server: Linux, GbE
  * WANem: http://sourceforge.net/projects/wanem/ , GbE
  * Route IP traffic through WANem when necessary.
+
+## Useful Commands
+
+ * traceroute
+ * iperf
+ * Clean cache
+
+```
+sync
+sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
+```
+
  * Disable network interface offload engines if packet capture is desired
 
 ```
@@ -20,18 +32,6 @@ Testbed Setup
  ethtool --offload <iface> lro off
  ethtool --offload <iface> rxvlan off
  ethtool --offload <iface> txvlan off
-```
-
-
-## Useful Commands
-
- * traceroute
- * iperf
- * Clean cache
-
-```
-sync
-sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 ```
 
 
