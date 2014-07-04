@@ -9,8 +9,8 @@ Testbed Setup
 
 ## Useful Commands
 
- * traceroute
- * iperf
+ * `traceroute`
+ * `iperf`
  * Clean cache
 
 ```
@@ -35,7 +35,7 @@ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 ```
 
 
-## Swift
+## OpenStack Swift
 
 
 ### Server
@@ -45,12 +45,12 @@ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 ### Client - CloudFuse
 
  * http://redbo.github.io/cloudfuse/
- * Note that older kernels does not support O_DIRECT for FUSE open().
+ * Note that older kernels does not support `O_DIRECT` for FUSE `open()`.
 
 
 ## NFS
 
- * /etc/exports
+ * `/etc/exports`
 
 ```
 (NFS mount) 192.168.1.0/255.255.255.0(rw,sync,all_squash,no_subtree_check,anonuid=1000,anongid=1000)
@@ -66,7 +66,7 @@ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 
 #### Target
 
- * udisk start script ~/start-iscsi-server.sh
+ * udisk start script `~/start-iscsi-server.sh`
 
 ```
 #!/bin/sh
@@ -81,7 +81,7 @@ sudo /usr/local/bin/udisk -d $DEV -p $PORT -b 1024 -n `expr 1024 \* 1024 \* $GBS
 
 #### Initiator
 
-  * ~/start-iscsi-client.sh
+  * `~/start-iscsi-client.sh`
 
 ```
 sudo modprobe intel_iscsi
@@ -90,13 +90,13 @@ sudo mount /dev/sdXn (mountpoint)
 
 ### IET iSCSI Target
 
- * /etc/default/iscsitarget
+ * `/etc/default/iscsitarget`
 
 ```
 ISCSITARGET_ENABLE=true
 ```
 
- * Package (Ubuntu): iscsitarget ietadm
+ * Package (Ubuntu): `iscsitarget` and `ietadm`
 
 ### Open-iSCSI Initiator
 
@@ -115,7 +115,7 @@ Performance Tuning
 
 ### TCP parameter
 
- *  Server and Client: /etc/sysctl.conf
+ *  Server and Client: `/etc/sysctl.conf`
 
 ```
 # for swift
@@ -133,7 +133,7 @@ net.core.netdev_max_backlog = 10000
 
 ### NFS
 
- * server worker threads: /etc/sysconfig/nfs
+ * server worker threads: `/etc/sysconfig/nfs`
 
 ```
 # Default is 8
@@ -142,7 +142,7 @@ RPCNFSDCOUNT=32
 
 ### iSCSI
 
- * Intel iSCSI target (udisk): /etc/ips.conf
+ * Intel iSCSI target (udisk): `/etc/ips.conf`
 
 ```
 MaxRecvDataSegmentLength=65536
@@ -153,7 +153,7 @@ MaxBurstLength=67108864
 
  * Open-iSCSI initiator:
 
-  * /etc/iscsi/iscsid.conf
+  * `/etc/iscsi/iscsid.conf`
 
 ```
 #(also those in ietd.conf of Target)
@@ -161,7 +161,7 @@ node.conn[0].tcp.window_size = 4194304
 ```
 
 
- * IET iSCSI Target: /etc/iet/ietd.conf
+ * IET iSCSI Target: `/etc/iet/ietd.conf`
 
 ```
 MaxRecvDataSegmentLength = 262144
