@@ -7,6 +7,17 @@ Testbed Setup
  * WANem: http://sourceforge.net/projects/wanem/ , GbE
  * Route IP traffic through WANem when necessary.
 
+
+## Prerequisites
+
+
+```
+tcpdump
+ethtool
+nfs
+```
+
+
 ## Useful Commands
 
  * `traceroute`
