@@ -66,7 +66,7 @@ function plot_baseline_bs(rw, legendpos = 'northwest', legendside = 'right')
  close(gcf)
 endfunction
 
-function plot_access_pattern_bs(rw, legendpos = 'southeast', legendside = 'right', scenario = 3)
+function plot_access_form_bs(rw, legendpos = 'southeast', legendside = 'right', scenario = 3)
  h = common_preparation();
  plot_thp_vs_bs_one_line(h, scenario, 1, 'def', rw);
  plot_thp_vs_bs_one_line(h, scenario, 1, 'd', rw);
@@ -85,7 +85,7 @@ function plot_access_pattern_bs(rw, legendpos = 'southeast', legendside = 'right
  axis('tight');
  bs_set_xaxis(h);
  ylabel(h, 'Throughput (MiBps)');
- print_to_file(['bs_access_pattern_c' num2str(scenario) '-' rw]);
+ print_to_file(['bs_access_form_c' num2str(scenario) '-' rw]);
  close(gcf);
 endfunction
 

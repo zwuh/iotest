@@ -1,8 +1,8 @@
 % metadata plotting functions
 % TODO include this from lib.m
 
-%global metadata_target_legends = {[1 -1],[2 -1],[3 -1],[5 -1]}
-global metadata_target_legends = {[1 -1],[2 -1],[5 -1]}
+%global metadata_target_legends = {[1 0],[2 0],[3 0],[5 0]}
+global metadata_target_legends = {[1 0],[2 0],[5 0]}
 
 function [A D] = get_metaTIME_array(scenario, target, op)
  name = ['metaTIME_c' num2str(scenario) '_t' num2str(target) '_' op];
@@ -60,7 +60,6 @@ function plot_meta_time_core(h, scenario, op)
  x_axis = [0 1 2 3];
  ax_nfs = plot_meta_time_one_line(h, scenario, 1, op, x_axis);
  ax_iscsi_cfq = plot_meta_time_one_line(h, scenario, 2, op, x_axis);
- ax_iscsi_dead = plot_meta_time_one_line(h, scenario, 3, op, x_axis);
  ax_fuse = plot_meta_time_one_line(h, scenario, 5, op, x_axis);
 
  set(h, 'xlim', [-0.1 3.1])
