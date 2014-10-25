@@ -1,0 +1,7 @@
+*.tex
+*.pdf
+*.png
+*.eps
+*.ps
+data.m
+boxdat.m
