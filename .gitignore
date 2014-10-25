@@ -1,3 +1,6 @@
+*~
+*.bak
+.DS_Store
 *.swp
 *.o
 a.out

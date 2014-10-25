@@ -53,6 +53,10 @@ sudo sh -c "echo 3 > /proc/sys/vm/drop_caches"
 
  * http://docs.openstack.org/developer/swift/development_saio.html
 
+ * Local installation using virtualenv (http://virtualenv.readthedocs.org/en/latest/)
+
+ * Modify `SWIFT_DIR` and `RUN_DIR` in `swift/common/manager.py` to point to relevant directories.
+
 ### Client - CloudFuse
 
  * http://redbo.github.io/cloudfuse/
