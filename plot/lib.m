@@ -1,30 +1,35 @@
 % iotest plot library
 
-% TODO
+% TODO: configurables
 global hide_legend = 0
 global hide_title = 0
 global no_errorbar = 1
 global plot_linewidth = 2
 global plot_markersize = 12
 global base_fontsize = 12
+global base_fontname = "*"
 global base_linewidth = 0.25 % grids
-global legend_fontsize = 12
+% TODO Choices are limited here, see glps_renderer::set_font() of Octave.
+% http://hg.savannah.gnu.org/hgweb/octave/file/ec10705dbd83/libinterp/corefcn/gl2ps-renderer.cc#l181
+% That function has to be hacked to allow seting fontname to arbitrary string,
+% which may be required if the resulting EPS or PDF is to be included in
+% other document with other font.
+global legend_fontname = base_fontname
+global legend_fontsize = base_fontsize
 % default six in one page
 global papersize = [6 5]
 global paperposition = [0,0,[6 5]]
 global position = [0.11 0.1 0.867 0.84]
 global position_no_title = [0.11 0.1 0.867 0.887]
 
-% TODO
+% TODO: Select the desired output format.
+% Can be overriden by redefining this function.
 function print_to_file(name,h=gcf)
- %legend_text = findobj(h, 'type', 'axes', 'tag', 'legend');
- %set(legend_text, 'fontsize', 9);
-% print(h,'-dpdf','-color', [name '.pdf']);
+ print(h,'-depsc2','-color', [name '.eps']);
+% print(h,'-dpsc2','-color', [name '.ps']);
 % print(h,'-dpng','-color', [name '.png']);
- print(h,'-depsc2', '-color', [name '.eps']);
-% print(h,'-depslatex', '-color', name);
-% print(h,'-dtikz', '-color', name);
 endfunction
+% -----------------
 
 % iotest shared legends for f,bs,op
 %global typical_target_legends = {[1 1],[1 2],[2 1],[2 2],[3 1],[3 2],[5 0]};
@@ -53,6 +58,9 @@ function set_paper()
  global base_fontsize
  set (0,'defaultaxesfontsize', base_fontsize)
  set (0,'defaulttextfontsize', base_fontsize)
+ global base_fontname
+ set (0,'defaultaxesfontname', base_fontname)
+ set (0,'defaulttextfontname', base_fontname)
 endfunction
 
 function H = common_preparation(scenario=0)
@@ -170,11 +178,8 @@ function set_axis(HAX, target, flag)
   case 5 % Swift+CloudFuse
    linestyle = "-";
    linewidth = plot_linewidth - 1;
-   switch (i_flag)
-    case flag_def
-     color = black;
-     marker = 'p';
-   endswitch
+   color = black;
+   marker = 'p';
  endswitch
 
  set(HAX, 'color', color)
@@ -237,7 +242,9 @@ function make_legend(HAX, targets, location = 'northwest', side = 'right')
   legend(HAX, 'boxoff');
   hl = legend(HAX, legends, 'location', location);
   global legend_fontsize
-  set(hl, 'fontsize', legend_fontsize);
+  set(hl, 'fontsize', legend_fontsize)
+  global legend_fontname
+  set(hl, 'fontname', legend_fontname)
   global hide_legend
   if (1 == hide_legend)
    %display('hiding legend')
