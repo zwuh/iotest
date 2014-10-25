@@ -1,0 +1,9 @@
+*.swp
+*.o
+a.out
+loop
+pthread
+worker
+punlink
+parse-file
+parse-meta
