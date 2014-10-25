@@ -5,13 +5,14 @@ close all
 run lib.m
 run boxdat.m
 
-%TODO
+% TODO: local configurations
 hide_legend = 0
 hide_title = 0
 
 function print_to_file(name,h=gcf)
  print(h,'-dpng','-color', [name '.png'])
 endfunction
+% -----------------
 
 scenario_list = [1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27];
 fs_list = [1 2 3 4 5];
